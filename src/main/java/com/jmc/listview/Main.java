@@ -6,10 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -20,11 +18,17 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(10);
 
         TextField textField = new TextField();
         textField.setPromptText("Add a task to do");
         textField.setMaxWidth(300);
-        Button button = new Button("Add");
+        Button addButton = new Button("Add");
+        Button removeButton = new Button("Remove");
+        hBox.getChildren().addAll(addButton, removeButton);
+
 
         ListView<Task> listView = new ListView<>();
         ObservableList<Task> daily_task = FXCollections.observableArrayList(
@@ -44,7 +48,7 @@ public class Main extends Application {
         listView.setCellFactory(taskListView -> (new CustomTask()));
         listView.setItems(daily_task);
 
-        button.setOnMouseClicked(e -> {
+        addButton.setOnMouseClicked(e -> {
             if(!textField.textProperty().get().isEmpty()){
                 String txt = textField.getText();
                 daily_task.add(new Task(txt));
@@ -52,7 +56,12 @@ public class Main extends Application {
             }
         });
 
-        vBox.getChildren().addAll(listView, textField, button);
+        removeButton.setOnMouseClicked(e -> {
+            Task selectedTask = listView.getSelectionModel().getSelectedItem();
+            if(selectedTask != null) daily_task.remove(selectedTask);
+        });
+
+        vBox.getChildren().addAll(listView, textField, hBox);
         VBox.setVgrow(listView, Priority.ALWAYS);
 
 
